@@ -9,14 +9,14 @@ import utilStyles from '../styles/utils.module.css'
 
 type Layout = {
   children?: ReactNode
-  home: boolean
+  home?: boolean
 }
 
 const name = 'Anthony'
 export const siteTitle = 'Next.js Sample Website'
 
 const Layout: NextPage<Layout> = props => {
-  const { children, home } = props
+  const { children, home = false } = props
 
   return (
     <div className={styles.container}>
