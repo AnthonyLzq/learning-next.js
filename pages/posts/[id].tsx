@@ -1,7 +1,10 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
+import Head from 'next/head'
 
 import Layout from '../../components/layout'
+import Date from '../../components/Date'
 import { getAllPostIds, getPostData } from '../../lib/posts'
+import utilStyles from '../../styles/utils.module.css'
 
 /**
  * This is need it when you want to Statically Generate Pages with Dynamic Routes
@@ -14,21 +17,27 @@ type PostProps = {
     id: string
     date: string
     title: string
+    contentHtml: string
   }
 }
 
 const Post: NextPage<PostProps> = props => {
   const {
-    postData: { id, date, title }
+    postData: { id, date, title, contentHtml }
   } = props
 
   return (
     <Layout>
-      {title}
-      <br />
-      {id}
-      <br />
-      {date}
+      <Head>
+        <title>{title}</title>
+      </Head>
+      <article>
+        <h1 className={utilStyles.headingXl}>{title}</h1>
+        <div className={utilStyles.lightText}>
+          <Date dateString={date} />
+        </div>
+        <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+      </article>
     </Layout>
   )
 }
@@ -42,10 +51,10 @@ const getStaticPaths: GetStaticPaths = () => {
   }
 }
 
-const getStaticProps: GetStaticProps = ({ params }) => {
+const getStaticProps: GetStaticProps = async ({ params }) => {
   if (!params?.id) throw new Error('Idk')
 
-  const postData = getPostData(params.id as string)
+  const postData = await getPostData(params.id as string)
 
   return {
     props: {
